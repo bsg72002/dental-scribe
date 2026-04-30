@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<!-- saved from url=(0065)file:///C:/Users/Brian%20Glazier/Downloads/BSG_Dental_Scribe.html -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="en">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BSG Dental Scribe</title>
 <style>
@@ -69,7 +69,7 @@
 <div class="app">
   <div class="header">
     <div class="header-logo">
-      <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 2.61 1.41 4.88 3.5 6.17V17c0 .55.45 1 1 1h5c.55 0 1-.45 1-1v-1.83C17.59 13.88 19 11.61 19 9c0-3.87-3.13-7-7-7zm-1 14v-1h2v1h-2zm3-2.32V15h-4v-1.32C8.39 12.6 7 10.93 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.93-1.39 3.6-3 3.68z"></path></svg>
+      <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 2.61 1.41 4.88 3.5 6.17V17c0 .55.45 1 1 1h5c.55 0 1-.45 1-1v-1.83C17.59 13.88 19 11.61 19 9c0-3.87-3.13-7-7-7zm-1 14v-1h2v1h-2zm3-2.32V15h-4v-1.32C8.39 12.6 7 10.93 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.93-1.39 3.6-3 3.68z"/></svg>
     </div>
     <h1>BSG Dental Scribe</h1>
     <p>Voice to clinical note <span class="badge-count">12 templates</span></p>
@@ -79,13 +79,13 @@
     <div class="card-label">Recording</div>
     <button class="record-btn" id="recordBtn" onclick="toggleRecording()">
       <div class="mic-circle">
-        <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"></path></svg>
+        <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/></svg>
       </div>
       <span id="btnLabel">Tap to start recording</span>
       <span class="pulse-ring"></span>
     </button>
     <div class="status-row">
-      <span class="status-text" id="statusText">Ready — speak naturally about the visit</span>
+      <span class="status-text" id="statusText">Ready &mdash; speak naturally about the visit</span>
       <span class="timer" id="timer" style="display:none">0:00</span>
     </div>
     <div class="transcript-box" id="transcriptBox"></div>
@@ -95,7 +95,7 @@
   <div class="card" id="generatingCard" style="display:none">
     <div class="generating">
       <div class="dot-loader"><span></span><span></span><span></span></div>
-      <span>Generating your clinical note…</span>
+      <span>Generating your clinical note&hellip;</span>
     </div>
   </div>
 
@@ -131,7 +131,7 @@
   </div>
 
   <div class="install-hint">
-    <strong>Install as desktop app (Chrome/Edge):</strong> Open this file in your browser → click the menu (…) → <em>Save and share</em> → <em>Install as app</em> → check “Open as window.” Appears as its own icon on your desktop. To use on another computer, just copy this HTML file — no installation required.
+    <strong>Install as desktop app (Chrome/Edge):</strong> Open this file in your browser &rarr; click the menu (&hellip;) &rarr; <em>Save and share</em> &rarr; <em>Install as app</em> &rarr; check &ldquo;Open as window.&rdquo; Appears as its own icon on your desktop. To use on another computer, just copy this HTML file &mdash; no installation required.
   </div>
 </div>
 
@@ -483,6 +483,5 @@ function blobToBase64(blob) {
   });
 }
 </script>
-
-
-</body></html>
+</body>
+</html>
