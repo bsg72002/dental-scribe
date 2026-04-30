@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<!-- saved from url=(0065)file:///C:/Users/Brian%20Glazier/Downloads/BSG_Dental_Scribe.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BSG Dental Scribe</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f5f4f0; --surface: #ffffff; --surface2: #f0efe9;
+    --border: rgba(0,0,0,0.10); --border-strong: rgba(0,0,0,0.18);
+    --text: #1a1a18; --text2: #6b6b65; --text3: #9a9a93;
+    --accent: #1a5c3a; --accent-light: #e6f2ec; --accent-text: #0e3d26;
+    --red: #c0392b; --red-light: #fdf0ee;
+    --radius: 10px; --radius-lg: 14px;
+  }
+  body { font-family: 'Georgia','Times New Roman',serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem 4rem; }
+  .app { width: 100%; max-width: 680px; }
+  .header { text-align: center; margin-bottom: 2.5rem; }
+  .header-logo { display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px; background: var(--accent); border-radius: 14px; margin-bottom: 0.75rem; }
+  .header-logo svg { width: 26px; height: 26px; fill: white; }
+  .header h1 { font-size: 22px; font-weight: normal; letter-spacing: 0.02em; }
+  .header p { font-size: 14px; color: var(--text2); margin-top: 4px; font-family: -apple-system,sans-serif; }
+  .badge-count { display: inline-block; background: var(--accent); color: white; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; font-family: -apple-system,sans-serif; margin-left: 6px; vertical-align: middle; }
+  .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1rem; }
+  .card-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); font-family: -apple-system,sans-serif; margin-bottom: 1rem; }
+  .record-btn { width: 100%; padding: 16px 20px; background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--radius); color: var(--text); font-size: 15px; font-family: -apple-system,sans-serif; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: background 0.12s, border-color 0.12s; }
+  .record-btn:hover { background: var(--surface2); }
+  .record-btn.recording { border-color: var(--red); color: var(--red); background: var(--red-light); }
+  .record-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .mic-circle { width: 36px; height: 36px; border-radius: 50%; background: var(--accent-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.12s; }
+  .record-btn.recording .mic-circle { background: var(--red-light); }
+  .mic-circle svg { width: 18px; height: 18px; fill: var(--accent); }
+  .record-btn.recording .mic-circle svg { fill: var(--red); }
+  .pulse-ring { display: none; width: 10px; height: 10px; border-radius: 50%; background: var(--red); animation: pulse 1s infinite; }
+  .recording .pulse-ring { display: inline-block; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.3;transform:scale(0.6)} }
+  .status-row { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; min-height: 20px; }
+  .status-text { font-size: 13px; color: var(--text2); font-family: -apple-system,sans-serif; }
+  .timer { font-size: 13px; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; font-family: -apple-system,sans-serif; }
+  .transcript-box { background: var(--surface2); border-radius: var(--radius); padding: 10px 14px; font-size: 13px; color: var(--text2); line-height: 1.65; margin-top: 12px; min-height: 56px; font-family: -apple-system,sans-serif; white-space: pre-wrap; display: none; }
+  .generating { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text2); font-family: -apple-system,sans-serif; }
+  .dot-loader { display: flex; gap: 4px; }
+  .dot-loader span { width: 6px; height: 6px; border-radius: 50%; background: var(--text3); display: inline-block; animation: bounce 1.1s infinite ease-in-out; }
+  .dot-loader span:nth-child(2) { animation-delay: 0.18s; }
+  .dot-loader span:nth-child(3) { animation-delay: 0.36s; }
+  @keyframes bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-7px)} }
+  .note-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .proc-badge { font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; background: var(--accent-light); color: var(--accent-text); font-family: -apple-system,sans-serif; }
+  .note-textarea { width: 100%; min-height: 340px; padding: 14px; font-size: 13px; font-family: 'Courier New',monospace; line-height: 1.7; border: 0.5px solid var(--border-strong); border-radius: var(--radius); background: var(--surface); color: var(--text); resize: vertical; }
+  .note-textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .btn-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .btn { padding: 9px 18px; border-radius: var(--radius); border: 0.5px solid var(--border-strong); background: var(--surface); color: var(--text); font-size: 13px; cursor: pointer; font-family: -apple-system,sans-serif; transition: background 0.12s; }
+  .btn:hover { background: var(--surface2); }
+  .btn.primary { background: var(--accent); color: white; border-color: var(--accent); }
+  .btn.primary:hover { background: var(--accent-text); }
+  .btn.copied { background: var(--accent-light); color: var(--accent-text); border-color: var(--accent); }
+  .hint { font-size: 12px; color: var(--text3); margin-top: 8px; font-family: -apple-system,sans-serif; line-height: 1.5; }
+  .error-box { background: var(--red-light); color: var(--red); border-radius: var(--radius); padding: 10px 14px; font-size: 13px; margin-top: 10px; font-family: -apple-system,sans-serif; display: none; line-height: 1.5; }
+  .tips-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: 10px; }
+  .tip-item { background: var(--surface2); border-radius: var(--radius); padding: 10px 12px; }
+  .tip-proc { font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent); font-family: -apple-system,sans-serif; margin-bottom: 4px; }
+  .tip-text { font-size: 12px; color: var(--text2); font-family: -apple-system,sans-serif; line-height: 1.5; }
+  .install-hint { background: var(--accent-light); border-radius: var(--radius); padding: 12px 16px; margin-top: 1rem; font-size: 13px; color: var(--accent-text); font-family: -apple-system,sans-serif; line-height: 1.6; }
+  .install-hint strong { font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="header-logo">
+      <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 2.61 1.41 4.88 3.5 6.17V17c0 .55.45 1 1 1h5c.55 0 1-.45 1-1v-1.83C17.59 13.88 19 11.61 19 9c0-3.87-3.13-7-7-7zm-1 14v-1h2v1h-2zm3-2.32V15h-4v-1.32C8.39 12.6 7 10.93 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.93-1.39 3.6-3 3.68z"></path></svg>
+    </div>
+    <h1>BSG Dental Scribe</h1>
+    <p>Voice to clinical note <span class="badge-count">12 templates</span></p>
+  </div>
+
+  <div class="card" id="record-card">
+    <div class="card-label">Recording</div>
+    <button class="record-btn" id="recordBtn" onclick="toggleRecording()">
+      <div class="mic-circle">
+        <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"></path></svg>
+      </div>
+      <span id="btnLabel">Tap to start recording</span>
+      <span class="pulse-ring"></span>
+    </button>
+    <div class="status-row">
+      <span class="status-text" id="statusText">Ready — speak naturally about the visit</span>
+      <span class="timer" id="timer" style="display:none">0:00</span>
+    </div>
+    <div class="transcript-box" id="transcriptBox"></div>
+    <div class="error-box" id="errorBox"></div>
+  </div>
+
+  <div class="card" id="generatingCard" style="display:none">
+    <div class="generating">
+      <div class="dot-loader"><span></span><span></span><span></span></div>
+      <span>Generating your clinical note…</span>
+    </div>
+  </div>
+
+  <div class="card" id="noteCard" style="display:none">
+    <div class="note-header">
+      <div class="card-label" style="margin-bottom:0">Clinical note</div>
+      <span class="proc-badge" id="procBadge">Note</span>
+    </div>
+    <textarea class="note-textarea" id="noteOutput" spellcheck="true"></textarea>
+    <div class="btn-row">
+      <button class="btn primary" id="copyBtn" onclick="copyNote()">Copy to clipboard</button>
+      <button class="btn" onclick="resetApp()">New note</button>
+    </div>
+    <p class="hint">Review and edit above, then paste into Dentrix. Assistant field left blank for you to fill in.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Dictation tips</div>
+    <div class="tips-grid">
+      <div class="tip-item"><div class="tip-proc">Composite</div><div class="tip-text">"Tooth 14 MO, recurrent decay, two lido one articaine, shade A2, NV cleaning six months"</div></div>
+      <div class="tip-item"><div class="tip-proc">Crown prep</div><div class="tip-text">"Crown prep tooth 30, fractured cusp, one articaine, shade B1, NV seat crown two weeks"</div></div>
+      <div class="tip-item"><div class="tip-proc">Crown cement</div><div class="tip-text">"Crown cement tooth 30, one carpule lido, fit and shade approved, patient satisfied"</div></div>
+      <div class="tip-item"><div class="tip-proc">Endo</div><div class="tip-text">"RCT tooth 19, irreversible pulpitis, WL 21mm, shaped to 35, necrotic, amoxicillin 500"</div></div>
+      <div class="tip-item"><div class="tip-proc">Extraction</div><div class="tip-text">"Surgical ext tooth 1, non-restorable, sectioned, 3-0 silk, ibuprofen and amox"</div></div>
+      <div class="tip-item"><div class="tip-proc">Limited exam</div><div class="tip-text">"Limited exam, pain tooth 18, cold sensitive, cracked cusp, recommend crown"</div></div>
+      <div class="tip-item"><div class="tip-proc">Comp / Periodic</div><div class="tip-text">"Comp exam, first visit, pano and 4 BWX, recommend cleaning and two fillings, refer perio"</div></div>
+      <div class="tip-item"><div class="tip-proc">Impression</div><div class="tip-text">"Impression for removable partial, upper and lower alginate, shade A2"</div></div>
+      <div class="tip-item"><div class="tip-proc">Wax rims</div><div class="tip-text">"Wax rims tried in, bite reg taken, shade A1, patient wants try-in before extraction"</div></div>
+      <div class="tip-item"><div class="tip-proc">Wax try-in</div><div class="tip-text">"Wax try-in, patient approves shade and fit, process and finish, NV deliver partial"</div></div>
+      <div class="tip-item"><div class="tip-proc">Delivery</div><div class="tip-text">"Delivering upper partial, adjustments made, patient approves form and fit"</div></div>
+      <div class="tip-item"><div class="tip-proc">Denture adjust</div><div class="tip-text">"Denture adjustment, patient showed sore spot lower right, PIP applied and adjusted"</div></div>
+    </div>
+  </div>
+
+  <div class="install-hint">
+    <strong>Install as desktop app (Chrome/Edge):</strong> Open this file in your browser → click the menu (…) → <em>Save and share</em> → <em>Install as app</em> → check “Open as window.” Appears as its own icon on your desktop. To use on another computer, just copy this HTML file — no installation required.
+  </div>
+</div>
+
+<script>
+const SYSTEM_PROMPT = `You are a dental clinical note scribe for Dr. BSG. Listen to the dentist's verbal description and produce a formatted clinical note.
+
+PROCEDURE DETECTION:
+- "composite" / "filling" / "resin" → composite
+- "crown prep" / "prepping a crown" (no endo) → crown_prep
+- "crown cement" / "cementing" / "seating" / "deliver crown" / "seat crown" → crown_cement
+- "root canal" / "endo" / "RCT" → endo
+- "extraction" / "ext" / "pull" / "remove tooth" → extraction
+- "limited exam" / "emergency exam" → limited
+- "comprehensive exam" / "comp exam" / "new patient" / "full exam" → comp
+- "periodic" / "recall" / "regular checkup" → periodic
+- "impression for removable" / "denture impression" / "partial impression" / "taking impressions for" → impression
+- "wax rims" / "wax rim" → wax_rims
+- "wax try-in" / "try-in" → wax_tryin
+- "denture adjustment" / "partial adjustment" / "adjust denture" / "sore spot on denture" → denture_adjust
+- "delivery" / "delivering" / "deliver partial" / "deliver denture" / "insert partial" → delivery
+
+RULES:
+- ANESTHESIA: Only include agents mentioned. Format: "(2 Carpules) Lidocaine 2% 1:100,000 EPI, (1 Carpule) 4% Articaine 1:100,000 EPI."
+- RMH: Fill in exactly what is dictated. Leave blank if not mentioned.
+- BP / PULSE: Fill in numbers if dictated. Leave blank if not mentioned.
+- NV: Fill in if dictated. Leave blank if not mentioned.
+- TOOTH: Use tooth number mentioned. Surfaces: M=mesial D=distal O=occlusal F=facial L=lingual B=buccal I=incisal.
+- Leave any field blank (label only) if not mentioned. Do NOT invent information.
+- Doctor is always BSG. Assistant is always left blank.
+
+RESPOND WITH EXACTLY:
+PROCEDURE: [key]
+DISPLAY: [short label e.g. "Crown Cement #30" or "Wax Try-In" or "Upper Partial Delivery"]
+
+[complete note]
+
+TEMPLATES — use exact wording, fill in {fields}:
+
+=== composite ===
+Composite restoration Tooth and Surface: {tooth_surface}
+RMH {rmh}
+BP: {bp}   P: {pulse}
+DX: Tooth requires fillings due to: {dx}.
+TX: Administered 20% Benzocaine Topical. {anesthesia}
+Tooth was prepped, any carious tooth structure was removed. Isolated with cotton rolls, and dry angle. Etched with 36% phosphoric acid. Placed Consepsis Bonded with Ultra dent Peak bond according to manufacturers instructions. Tooth filled to proper occlusion with Resin, filtek bulk fill composite, and 3M flowable composite
+shade used= {shade}
+Occlusion and contacts were checked and verified.
+DATA: Pt instructed to return if any problems occur.
+NV: {nv}
+Assistant-
+Doctor- BSG
+
+=== crown_prep ===
+Crown Prep
+BU PCR Tooth: {tooth}
+Crown type: Zirconia
+RMH {rmh}
+BP: {bp}   P: {pulse}
+DX: Full coverage indicated due to: {dx}
+TX: Administered 20% Benzocaine Topical. {anesthesia}
+Isolation: cotton rolls and dry angles. Decay was removed and Buildup placed with 36% phosphoric acid etch, Consepsis and Multicore Flow. Tooth was prepped sufficiently for crown. Cord packed using 00 cord impregnated with hemodent. Final scan taken and cord removed. Temporary crown material-Luxatemp. Cemented with 3M flowable
+Lab used: Dandy
+Shade: {shade}
+All margins acceptable and fully seated.
+Pt. was satisfied with shade selected.
+DATA: Pt instructed to contact us with any concerns
+NV: {nv}
+Assistant-
+Doctor- BSG
+
+=== crown_cement ===
+Crown Cement tooth: {tooth}
+RMH {rmh}
+BP: {bp}   P: {pulse}
+TX: Administered 20% Benzocaine Topical. {anesthesia}
+Temporary crown removed. Tooth cleaned. Verified fit, margins, contacts, and occlusion. Adjustments made as necessary. Patient approves of shade and form.
+Crowns were cemented with: RelyX Luting Plus
+Excess cement removed.
+Pt is satisfied.
+Pt to contact us with any concerns.
+NV: {nv}
+Assistant:
+Doctor: BSG
+
+=== endo ===
+Endodontic treatment and BU PCR Tooth: {tooth}
+RMH {rmh}
+BP: {bp}   P: {pulse}
+DX: Root Canal Indicated due to: {dx}
+Crown indicated due to endo treated tooth.
+Crown Type: Zirconia
+Test: Cold Test: {coldtest}  Percussion Test: {perctest}
+TX: Administered 20% Benzocaine Topical. {anesthesia}
+Tooth was prepped, all caries removed. Isolated with Rubber Dam.
+Pulp was: {pulp}
+WL: {wl}
+Canals Shaped to size: {canalsize}
+Canals irrigated with 50% NaOCl and EDTA. Canals dried. Filled with Seal Apex and
+Size: {conesize} Cones.
+Etched with 36% phosphoric acid. Placed consepsis and peak bond and Built up with Multicore Flow.
+Tooth was prepped sufficiently for crown. Cord packed using 00 cord impregnated with hemodent. Final scan taken, and cord removed. Temporary crown material-Luxatemp.
+Lab used: Dandy
+Shade: {shade}
+All margins acceptable and fully seated.
+Pt. was satisfied with shade selected.
+DATA: Pt instructed to contact us with any concerns
+RX: {rx}
+NV: {nv}
+Assistant-
+Doctor- BSG
+
+=== extraction ===
+Surgical Extraction tooth: {tooth}
+RMH {rmh}
+BP: {bp}   P: {pulse}
+DX: Extraction indicated due to: {dx}
+Explained Risks and alternatives to extraction to patient.
+TX: Administered 20% Benzocaine Topical anesthetic. {anesthesia}
+Released buccal tissue removed necessary bone to obtain purchase point.
+{sectioned}
+Tooth was EXT with elevator and forceps. Socket was curettaged and irrigated with copious saline solution.
+Sutures: {sutures}
+RX given: {rx}
+consent signed.
+POI: Given
+DATA: Pt instructed to return with any problems.
+NV: {nv}
+Assistant-
+Doctor- BSG
+
+=== limited ===
+Limited Exam
+RMH {rmh}
+CC: {cc}
+DX: {dx}
+RX: {rx}
+NV: {nv}
+Assistant-
+Doctor- BSG
+
+=== comp ===
+Comp Oral Eval
+RMH {rmh}
+CC: The patient stated {cc}
+X-rays taken: With patients verbal consent {xrays}.
+Recommended Cleaning: {cleaning}
+Recommended Treatment: {treatment}
+Referrals: {referrals}
+NV: {nv}
+Assistant:
+Doctor: BSG
+
+=== periodic ===
+Periodic exam
+RMH {rmh}
+CC: The patient stated {cc}
+X-rays taken: With patients verbal consent {xrays}.
+Recommended Treatment: {treatment}
+Referrals: {referrals}
+NV: {nv}
+Assistant:
+Doctor: BSG
+
+=== impression ===
+Impression for Removable: {prosthesis_type}
+RMH {rmh}
+DX: Pt requires removable prosthesis to replace missing teeth.
+Tx: Impression of Upper arch taken using: {upper_impression}  Impression of lower arch taken using: {lower_impression}
+Shade selected: {shade}
+Pt was informed of the challenges involved with a removable prosthesis including, but not limited to: sore spots, limited retention, mobility while chewing, changes in speech, and changes in the ability to chew certain foods, change in appearance including bulkiness on the lip areas.
+NV: {nv}
+Assistant:
+Dentist: BSG
+
+=== wax_rims ===
+Wax Rims
+TX: Wax rims tried in, adjusted to fit pt's bite, and determined length of teeth. Bite reg taken with Thermo Clone VPS.
+Shade: {shade}
+{extra_notes}
+NV: {nv}
+Assistant-
+Doctor- BSG
+
+=== wax_tryin ===
+Wax try-in
+Pt approves the look, shade and fit. Process and finish for final.
+NV: {nv}
+Assistant:
+Doctor: BSG
+
+=== denture_adjust ===
+Denture adjustment
+RMH {rmh}
+Pt. demonstrated areas causing discomfort. PIP was applied and areas were adjusted to pt satisfaction.
+Pt to contact us with any concerns
+Assistant:
+Doctor: BSG
+
+=== delivery ===
+Delivery of Removable: {prosthesis_type}
+Adjustments made as necessary. Patient given the opportunity to approve both form and fit of the prosthesis. Pt. approves.
+Pt to contact us with any concerns
+NV: {nv}
+Assistant:
+Doctor: BSG`;
+
+let mediaRecorder, audioChunks = [], timerInterval, seconds = 0, isRecording = false;
+
+async function toggleRecording() {
+  if (!isRecording) await startRecording();
+  else stopRecording();
+}
+
+async function startRecording() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+    mediaRecorder.onstop = processAudio;
+    mediaRecorder.start();
+    isRecording = true; seconds = 0;
+    document.getElementById('recordBtn').classList.add('recording');
+    document.getElementById('btnLabel').innerHTML = 'Recording &mdash; tap to stop';
+    document.getElementById('timer').style.display = 'inline';
+    const tb = document.getElementById('transcriptBox');
+    tb.style.display = 'block'; tb.textContent = 'Listening\u2026';
+    document.getElementById('statusText').textContent = 'Speak naturally \u2014 describe the visit';
+    document.getElementById('errorBox').style.display = 'none';
+    timerInterval = setInterval(() => {
+      seconds++;
+      const m = Math.floor(seconds/60), s = seconds%60;
+      document.getElementById('timer').textContent = m+':'+(s<10?'0':'')+s;
+    }, 1000);
+  } catch(e) {
+    showError('Microphone access denied. Please allow microphone access and try again.');
+  }
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') { mediaRecorder.stop(); mediaRecorder.stream.getTracks().forEach(t=>t.stop()); }
+  clearInterval(timerInterval);
+  isRecording = false;
+  document.getElementById('recordBtn').classList.remove('recording');
+  document.getElementById('recordBtn').disabled = true;
+  document.getElementById('btnLabel').textContent = 'Processing\u2026';
+  document.getElementById('statusText').textContent = 'Transcribing audio\u2026';
+}
+
+async function processAudio() {
+  const blob = new Blob(audioChunks, { type: 'audio/webm' });
+  try {
+    const transcript = await transcribeAudio(blob);
+    document.getElementById('transcriptBox').textContent = transcript;
+    document.getElementById('statusText').textContent = 'Generating clinical note\u2026';
+    document.getElementById('record-card').style.display = 'none';
+    document.getElementById('generatingCard').style.display = 'block';
+    await generateNote(transcript);
+  } catch(e) {
+    showError('Error: ' + e.message + '\n\nCheck your internet connection and try again.');
+    resetRecordBtn();
+    document.getElementById('record-card').style.display = 'block';
+  }
+}
+
+async function transcribeAudio(blob) {
+  const b64 = await blobToBase64(blob);
+  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514', max_tokens: 1000,
+      messages: [{ role: 'user', content: [
+        { type: 'document', source: { type: 'base64', media_type: 'audio/webm', data: b64 } },
+        { type: 'text', text: 'Transcribe this dental dictation exactly as spoken. Return only the transcript, no preamble.' }
+      ]}]
+    })
+  });
+  if (!resp.ok) { const e = await resp.json().catch(()=>({error:{message:'API error '+resp.status}})); throw new Error(e.error?.message||'Transcription failed'); }
+  const data = await resp.json();
+  return data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+}
+
+async function generateNote(transcript) {
+  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514', max_tokens: 1000,
+      system: SYSTEM_PROMPT,
+      messages: [{ role: 'user', content: transcript }]
+    })
+  });
+  if (!resp.ok) { const e = await resp.json().catch(()=>({error:{message:'API error '+resp.status}})); throw new Error(e.error?.message||'Note generation failed'); }
+  const data = await resp.json();
+  const text = data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+  const lines = text.split('\n');
+  let procLine='', displayLine='', noteStartIdx=0;
+  for (let i=0; i<lines.length; i++) {
+    if (lines[i].startsWith('PROCEDURE:')) procLine = lines[i].replace('PROCEDURE:','').trim();
+    else if (lines[i].startsWith('DISPLAY:')) displayLine = lines[i].replace('DISPLAY:','').trim();
+    else if (procLine && lines[i].trim()==='') { noteStartIdx=i+1; break; }
+  }
+  const noteText = lines.slice(noteStartIdx).join('\n').trim();
+  document.getElementById('generatingCard').style.display = 'none';
+  document.getElementById('noteCard').style.display = 'block';
+  document.getElementById('noteOutput').value = noteText;
+  document.getElementById('procBadge').textContent = displayLine || procLine || 'Clinical note';
+}
+
+function copyNote() {
+  const ta = document.getElementById('noteOutput');
+  ta.select(); document.execCommand('copy');
+  const btn = document.getElementById('copyBtn');
+  btn.textContent = 'Copied!'; btn.classList.remove('primary'); btn.classList.add('copied');
+  setTimeout(()=>{ btn.textContent='Copy to clipboard'; btn.classList.remove('copied'); btn.classList.add('primary'); }, 2200);
+}
+
+function resetApp() {
+  document.getElementById('record-card').style.display = 'block';
+  document.getElementById('noteCard').style.display = 'none';
+  document.getElementById('generatingCard').style.display = 'none';
+  document.getElementById('transcriptBox').style.display = 'none';
+  document.getElementById('transcriptBox').textContent = '';
+  document.getElementById('timer').style.display = 'none';
+  document.getElementById('timer').textContent = '0:00';
+  document.getElementById('statusText').textContent = 'Ready \u2014 speak naturally about the visit';
+  document.getElementById('errorBox').style.display = 'none';
+  resetRecordBtn();
+}
+
+function resetRecordBtn() {
+  document.getElementById('recordBtn').disabled = false;
+  document.getElementById('recordBtn').classList.remove('recording');
+  document.getElementById('btnLabel').textContent = 'Tap to start recording';
+}
+
+function showError(msg) {
+  const box = document.getElementById('errorBox');
+  box.textContent = msg; box.style.display = 'block';
+}
+
+function blobToBase64(blob) {
+  return new Promise((resolve,reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result.split(',')[1]);
+    r.onerror = reject;
+    r.readAsDataURL(blob);
+  });
+}
+</script>
+
+
+</body></html>
